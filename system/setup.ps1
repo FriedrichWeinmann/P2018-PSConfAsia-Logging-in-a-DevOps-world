@@ -29,6 +29,41 @@ $setupCode = {
         "> "
     }
     Import-Module PSUtil
+
+    function Show-Message
+    {
+        [CmdletBinding()]
+        param (
+            [Parameter(ValueFromPipeline = $true)]
+            $InputObject,
+
+            [string]
+            $Name
+        )
+
+        begin {
+            Write-PSFMessage -Message "[$Name] Beginning"
+        }
+        process {
+            foreach ($item in $InputObject) {
+                Write-PSFMessage -Message "[$Name] Processing $item" -Target $item -Tag start
+                $item
+                Write-PSFMessage -Message "[$Name] Finished processing $item" -Target $item -Tag end
+            }
+        }
+        end {
+            Write-PSFMessage -Message "[$Name] Ending"
+        }
+    }
+
+    function Test-DebugLevel {
+        [CmdletBinding()]
+        param ()
+        Write-PSFMessage -Level Verbose -Message "Message (Verbose)"
+    
+        Write-PSFMessage -Level Debug -Message "Message (Debug)"
+        Write-PSFMessage -Level Debug -Message "Message (Debug Breakpoint)" -Breakpoint
+    }
 }
 . $setupCode
 Set-Content -Value $setupCode -Path $profile.CurrentUserCurrentHost
